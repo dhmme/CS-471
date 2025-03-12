@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class BookmoduleConfig(AppConfig):
+class UsermoduleConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'bookmodule'
+    name = 'apps.usermodule'
