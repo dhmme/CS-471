@@ -9,12 +9,14 @@
             "name": "Python Debugger: Django",
             "type": "debugpy",
             "request": "launch",
+            "python": "/Users/hmoon/DjangoProjects/djangoenv",
             "args": [
                 "runserver"
             ],
             "django": true,
             "autoStartBrowser": false,
-            "program": "${workspaceFolder}\\manage.py"
+            "program": "${workspaceFolder}\\manage.py",
+            "justMyCode": true 
         }
     ]
 }

@@ -15,5 +15,6 @@ path('html5/listing/', views.viewListing, name="books.html5.listing"),
 path('html5/tables/', views.viewTable, name="books.html5.tables"),
 path('search/', views.search, name="books.search"),
 path('bookList/', views.search, name="books.bookList"),
-
+path('simple/query', views.simple_query, name="books.simple_query"),
+path('complex/query', views.complex_query, name="books.complex_query"),
 ]
