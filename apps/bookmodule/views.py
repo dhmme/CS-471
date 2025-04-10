@@ -1,6 +1,9 @@
 from django.shortcuts import render
-from .models import Book
-#from django.http import HttpResponse
+from .models import Book,Address,Student
+from django.db.models import Q
+from django.db.models import Count ,Min ,Max ,Sum ,Avg
+from django.http import HttpResponse
+
 #name = request.GET.get("name") or "world!"
 def index(request):
     name = request.GET.get("name") or "Abdulrhman!" 
@@ -106,7 +109,36 @@ def complex_query(request):
     else:
         return render(request, 'bookmodule/index.html')
 
+def task1(request):
+    books=Book.objects.filter(Q(price__lte = 50))
+    return render(request, 'bookmodule/bookList.html', {'books':books})
+ 
+def task2(request):
+    books=Book.objects.filter(Q(edition__gt = 2) & (Q(title__icontains = 'qu') | Q(author__icontains = 'qu')))
+    return render(request, 'bookmodule/bookList.html', {'books':books})
 
+def task3(request):
+    books=Book.objects.filter(~Q(edition__gt = 2) & (~Q(title__icontains = 'qu') | ~Q(author__icontains = 'qu')))
+    return render(request, 'bookmodule/bookList.html', {'books':books})
+
+def task4(request):
+    books=Book.objects.order_by('title')
+    return render(request, 'bookmodule/bookList.html', {'books':books})
+
+def task5(request):
+    query1 = Book.objects.aggregate(
+        count=Count('id'),
+        total_price=Sum('price'),
+        average_price=Avg('price'),
+        min_price=Min('price'),
+        max_price=Max('price')
+    )
+    return render(request, 'bookmodule/task5.html', {'query1': query1})
+
+
+def task7(request):
+    cities= Address.objects.annotate(student_count=Count('student'))
+    return render(request, 'bookmodule/task7.html', {'cities':cities})
 
 
 
