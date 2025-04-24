@@ -1,9 +1,9 @@
-from django.shortcuts import render
-from .models import Book,Address,Student
+from django.shortcuts import render , redirect , get_object_or_404
+from .models import Book,Address,Student , Students , Department ,Course , Card
 from django.db.models import Q
 from django.db.models import Count ,Min ,Max ,Sum ,Avg
 from django.http import HttpResponse
-
+from .forms import BookForm
 #name = request.GET.get("name") or "world!"
 def index(request):
     name = request.GET.get("name") or "Abdulrhman!" 
@@ -140,6 +140,92 @@ def task7(request):
     cities= Address.objects.annotate(student_count=Count('student'))
     return render(request, 'bookmodule/task7.html', {'cities':cities})
 
+def listbooks(request):
+    books = Book.objects.all()
+    return render(request, 'bookmodule/listbooks.html', {'books':books})
 
+def addbook(request):
+    if request.method =="POST":
+        Book.objects.create(
+            title= request.POST['title'],
+            author= request.POST['author']
+            )
+        return redirect('list_books')
+    return render(request, 'bookmodule/addbook.html')
+
+def editbook(request, id):
+    book = get_object_or_404(Book, id=id)
+    if request.method == "POST":
+        book.title = request.POST['title']
+        book.author = request.POST['author']
+        book.save()
+        return redirect('list_books')
+    return render(request, 'bookmodule/editbook.html', {'book':book})
+
+def deletebook(request, id):
+    book = get_object_or_404(Book, id=id)
+    book.delete()
+    return redirect('list_books')
+
+
+def listbooks2(request):
+    books = Book.objects.all()
+    return render(request, 'bookmodule/listbooks2.html', {'books':books})
+
+def addbook2(request):
+    if request.method =="POST":
+        form = BookForm(request.POST)
+        if form.is_valid():
+            form.save
+            return redirect("list_books2")
+    else:
+        form = BookForm() 
+    return render(request, 'bookmodule/addbook2.html',{'form':form})
+
+
+def editbook2(request, id):
+    book = get_object_or_404(Book, id=id)
+    if request.method == "POST":
+        form = BookForm(request.POST,instance=Book)
+        if form.is_valid():
+                form.save
+                return redirect('list_books2')
+    else:
+        form = BookForm(instance=Book) 
+    return render(request, 'bookmodule/editbook2.html', {'form':form})
+
+def deletebook2(request, id):
+    book = get_object_or_404(Book, id=id)
+    book.delete()
+    return redirect('list_books2')
+
+def task11(request):
+    departments = Department.objects.annotate(student_count=Count('students'))
+    return render(request, 'bookmodule/task11.html', {'departments':departments})
+
+def task22(request):
+    courses = Course.objects.annotate(student_count=Count('students'))
+    return render(request, 'bookmodule/task22.html', {'courses':courses})
+
+def task33(request):
+    departments = Department.objects.annotate(oldest_student_id=Min('students__id'))
+    
+    department_data = []
+
+    for department in departments:
+        if department.oldest_student_id is not None:
+            oldest_student = department.students_set.get(id=department.oldest_student_id)
+            department_data.append(
+                {
+                    'department_name': department.name,
+                    'oldest_student_name': oldest_student.name
+                }
+            )
+
+    return render(request, 'bookmodule/task33.html', {'department_data': department_data})
+
+def task44(request):
+    departments = Department.objects.annotate(student_count=Count('students')).filter(student_count__gt=2).order_by("-student_count")
+    return render(request, 'bookmodule/task44.html', {'departments':departments})
 
 # Create your views here.
